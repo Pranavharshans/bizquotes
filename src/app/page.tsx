@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
 
+
 export default function Component() {
   const [quote, setQuote] = useState({ content: "", author: "" })
   const [greeting, setGreeting] = useState("")
@@ -20,24 +21,15 @@ export default function Component() {
   }, [])
 
   const fetchQuote = async () => {
-    try {
-      // Combine the tags 'business', 'success', and 'leadership'
-      const response = await fetch('https://quote-garden.herokuapp.com/api/v3/quotes?tags=business,success,leadership');
-      const data = await response.json();
-      
-      if (data.data && data.data.length > 0) {
-        // Optionally, you can pick a random quote from the response
-        const randomQuote = data.data[Math.floor(Math.random() * data.data.length)];
-        setQuote({ content: randomQuote.quoteText, author: randomQuote.quoteAuthor });
-      } else {
-        // Fallback quote
-        setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" });
-      }
-    } catch (error) {
-      console.error('Error fetching quote:', error);
-      setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" });
-    }
+  try {
+    const response = await fetch('https://api.quotable.io/random?tags=business|success|leadership');
+    const data = await response.json();
+    setQuote({ content: data.content, author: data.author });
+  } catch (error) {
+    console.error('Error fetching quote:', error);
+    setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" });
   }
+}
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -168,27 +160,28 @@ export default function Component() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`text-sm sm:text-base md:text-lg font-light mb-8 self-start relative z-10 ${isDarkMode ? 'text-beige' : 'text-gray-900'}`}
+        className={`text-sm sm:text-base md:text-lg font-light mb-8 self-start relative z-10 ${isDarkMode ? 'text-beige-200 opacity-70 fade-in' : 'text-gray-700 opacity-70'}`}
       >
         {greeting}
       </motion.div>
-
-      <div ref={quoteRef} className="flex flex-col items-center justify-center text-center p-4 md:p-8 border rounded-lg bg-white dark:bg-gray-800 shadow-lg relative z-10">
-        <motion.div
-          className={`text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 ${isDarkMode ? 'text-beige' : 'text-gray-900'}`}
-          animate={{ opacity: [0, 1], scale: [0.8, 1] }}
-          transition={{ duration: 1 }}
-        >
-          &ldquo;{quote.content}&rdquo;
-        </motion.div>
-        <motion.div
-          className={`text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}
-          animate={{ opacity: [0, 1], y: [20, 0] }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          — {quote.author}
-        </motion.div>
-      </div>
+      
+      {/* Reduced font size for the quote and removed bold */}
+      <motion.div
+        ref={quoteRef}
+        key={quote.content}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex-grow flex flex-col justify-center items-center text-center relative z-10 p-8"
+      >
+        <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-6 leading-relaxed">
+          &quot;{quote.content}&quot;
+        </p>
+        
+        <p className={`text-lg sm:text-xl md:text-2xl font-medium mt-4 ${isDarkMode ? 'text-beige-200' : 'text-gray-600'}`}>
+          - {quote.author}
+        </p>
+      </motion.div>
     </div>
   )
 }
