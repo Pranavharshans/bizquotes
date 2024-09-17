@@ -20,7 +20,7 @@ export default function Component() {
     return () => clearInterval(interval)
   }, [])
 
-  cconst fetchQuote = async () => {
+  const fetchQuote = async () => {
   try {
     const response = await fetch('https://api.quotable.io/random?tags=business|success|leadership');
     const data = await response.json();
