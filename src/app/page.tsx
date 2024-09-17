@@ -20,16 +20,16 @@ export default function Component() {
     return () => clearInterval(interval)
   }, [])
 
-  const fetchQuote = async () => {
-    try {
-      const response = await fetch('https://api.quotable.io/random?tags=business|success|leadership')
-      const data = await response.json()
-      setQuote({ content: data.content, author: data.author })
-    } catch (error) {
-      console.error('Error fetching quote:', error)
-      setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" })
-    }
+  cconst fetchQuote = async () => {
+  try {
+    const response = await fetch('https://api.quotable.io/random?tags=business|success|leadership');
+    const data = await response.json();
+    setQuote({ content: data.content, author: data.author });
+  } catch (error) {
+    console.error('Error fetching quote:', error);
+    setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" });
   }
+}
 
   const getGreeting = () => {
     const hour = new Date().getHours()
