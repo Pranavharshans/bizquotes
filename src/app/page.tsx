@@ -5,12 +5,12 @@ import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
 
-
 export default function Component() {
   const [quote, setQuote] = useState({ content: "", author: "" })
   const [greeting, setGreeting] = useState("")
   const [isDarkMode, setIsDarkMode] = useState(true)
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false)
+  const [isUsingFallback, setIsUsingFallback] = useState(false)
   const quoteRef = useRef(null)
 
   useEffect(() => {
@@ -21,15 +21,28 @@ export default function Component() {
   }, [])
 
   const fetchQuote = async () => {
-  try {
-    const response = await fetch('https://api.quotable.io/random?tags=business|success|leadership');
-    const data = await response.json();
-    setQuote({ content: data.content, author: data.author });
-  } catch (error) {
-    console.error('Error fetching quote:', error);
-    setQuote({ content: "The best way to predict the future is to create it.", author: "Peter Drucker" });
+    try {
+      const response = await fetch('https://api.quotable.io/random?tags=inspirational')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      const data = await response.json()
+      setQuote({ content: data.content, author: data.author })
+      setIsUsingFallback(false)
+    } catch (error) {
+      console.error('Error fetching quote:', error)
+      const fallbackQuotes = [
+        { content: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+        { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+        { content: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
+        { content: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+        { content: "Leadership is not about being in charge. It is about taking care of those in your charge.", author: "Simon Sinek" }
+      ]
+      const randomQuote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)]
+      setQuote(randomQuote)
+      setIsUsingFallback(true)
+    }
   }
-}
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -86,7 +99,7 @@ export default function Component() {
         alert("To share on Instagram, please download the image and upload it manually to your Instagram app.")
         break
       case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`&quot;${quote.content}&quot; - ${quote.author}`)}&url=${encodeURIComponent(window.location.href)}`, '_blank')
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(`"${quote.content}" - ${quote.author}`)}&url=${encodeURIComponent(window.location.href)}`, '_blank')
         break
       default:
         console.error('Unknown sharing platform')
@@ -96,7 +109,6 @@ export default function Component() {
 
   return (
     <div className={`min-h-screen flex flex-col p-4 sm:p-8 md:p-16 relative transition-colors duration-300 ${isDarkMode ? 'bg-black text-white' : 'bg-[#f8f7f2] text-gray-900'}`}>
-      {/* Fading Grid lines */}
       <div 
         className="absolute inset-0 grid grid-cols-6 grid-rows-6"
         style={{
@@ -111,7 +123,6 @@ export default function Component() {
         ))}
       </div>
 
-      {/* Dark mode toggle */}
       <motion.button
         className={`fixed top-4 right-4 p-2 rounded-full z-20 ${isDarkMode ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}
         onClick={toggleDarkMode}
@@ -122,7 +133,6 @@ export default function Component() {
         {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
       </motion.button>
 
-      {/* Share button and menu */}
       <div className="fixed top-4 right-16 z-20">
         <motion.button
           className={`p-2 rounded-full ${isDarkMode ? 'bg-white text-black' : 'bg-gray-900 text-white'}`}
@@ -165,7 +175,6 @@ export default function Component() {
         {greeting}
       </motion.div>
       
-      {/* Reduced font size for the quote and removed bold */}
       <motion.div
         ref={quoteRef}
         key={quote.content}
@@ -181,6 +190,12 @@ export default function Component() {
         <p className={`text-lg sm:text-xl md:text-2xl font-medium mt-4 ${isDarkMode ? 'text-beige-200' : 'text-gray-600'}`}>
           - {quote.author}
         </p>
+
+        {isUsingFallback && (
+          <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            (Offline mode)
+          </p>
+        )}
       </motion.div>
     </div>
   )
