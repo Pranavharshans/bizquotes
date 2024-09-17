@@ -4,45 +4,32 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
+import { quotes } from './quotes'
 
 export default function Component() {
   const [quote, setQuote] = useState({ content: "", author: "" })
   const [greeting, setGreeting] = useState("")
   const [isDarkMode, setIsDarkMode] = useState(true)
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false)
-  const [isUsingFallback, setIsUsingFallback] = useState(false)
   const quoteRef = useRef(null)
 
+  const getRandomQuote = () => {
+    const randomIndex = Math.floor(Math.random() * quotes.length)
+    return quotes[randomIndex]
+  }
+
   useEffect(() => {
-    fetchQuote()
+    const updateQuote = () => {
+      setQuote(getRandomQuote())
+    }
+
+    updateQuote() // Initial quote
     setGreeting(getGreeting())
-    const interval = setInterval(fetchQuote, 30000)
+
+    const interval = setInterval(updateQuote, 30000) // Change quote every 30 seconds
+
     return () => clearInterval(interval)
   }, [])
-
-  const fetchQuote = async () => {
-    try {
-      const response = await fetch('https://api.quotable.io/random?tags=inspirational')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-      const data = await response.json()
-      setQuote({ content: data.content, author: data.author })
-      setIsUsingFallback(false)
-    } catch (error) {
-      console.error('Error fetching quote:', error)
-      const fallbackQuotes = [
-        { content: "The best way to predict the future is to create it.", author: "Peter Drucker" },
-        { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-        { content: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs" },
-        { content: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-        { content: "Leadership is not about being in charge. It is about taking care of those in your charge.", author: "Simon Sinek" }
-      ]
-      const randomQuote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)]
-      setQuote(randomQuote)
-      setIsUsingFallback(true)
-    }
-  }
 
   const getGreeting = () => {
     const hour = new Date().getHours()
@@ -190,12 +177,6 @@ export default function Component() {
         <p className={`text-lg sm:text-xl md:text-2xl font-medium mt-4 ${isDarkMode ? 'text-beige-200' : 'text-gray-600'}`}>
           - {quote.author}
         </p>
-
-        {isUsingFallback && (
-          <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            (Offline mode)
-          </p>
-        )}
       </motion.div>
     </div>
   )
