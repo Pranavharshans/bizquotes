@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
+import { Analytics } from "@vercel/analytics/react"
 
 export default function Component() {
   const [quote, setQuote] = useState({ content: "", author: "" })
