@@ -96,9 +96,7 @@ export default function Component() {
   }
 
   return (
-    <Head>
-        <title>BizQuotes</title> 
-      </Head>
+    
     <div className={`min-h-screen flex flex-col p-4 sm:p-8 md:p-16 relative transition-colors duration-300 ${isDarkMode ? 'bg-black text-white' : 'bg-[#f8f7f2] text-gray-900'}`}>
       <div 
         className="absolute inset-0 grid grid-cols-6 grid-rows-6"
