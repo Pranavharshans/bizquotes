@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
 import html2canvas from 'html2canvas'
 import { quotes } from './quotes'
+import Head from 'next/head'
 
 export default function Component() {
   const [quote, setQuote] = useState({ content: "", author: "" })
@@ -95,6 +96,9 @@ export default function Component() {
   }
 
   return (
+    <Head>
+        <title>BizQuotes</title> 
+      </Head>
     <div className={`min-h-screen flex flex-col p-4 sm:p-8 md:p-16 relative transition-colors duration-300 ${isDarkMode ? 'bg-black text-white' : 'bg-[#f8f7f2] text-gray-900'}`}>
       <div 
         className="absolute inset-0 grid grid-cols-6 grid-rows-6"
