@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Sun, Moon, Share2, Download, Facebook, Instagram, Twitter } from 'lucide-react'
